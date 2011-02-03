@@ -40,8 +40,10 @@ module Parse where
 	'::' { Token _ _ DoubleColon }
 	':'  { Token _ _ Colon }
   '.'  { Token _ _ Dot }
+  ','  { Token _ _ Comma }
   MODULE { Token _ _ (ModuleName $$) }
   TYPENAME { Token _ _ (TypeName $$) }
+  SYMBOL { Token _ _ (Symbol $$) }
 
 %%
 translationUnit :: {Module}
@@ -68,4 +70,21 @@ exportStatement : 'export' typenameList ';' {ExportTypeName $2}
 
 typenameList :: {[String]}
 typenameList : TYPENAME ',' typenameList {$1:$3}
-              | {-empty-} {[]}
+             | TYPENAME {[$1]}
+
+symbolList :: {[String]}
+symbolList : SYMBOL ',' sybmolList {$1 : $3}
+           | SYMBOL {[$1]}
+
+importStatement :: {TopLevelStatement}
+importStatement : 'import' MODULE '.' type ';' {ImportModuleType $2 $4}
+                | 'import' MODULE '.' SYMBOL ';' {ImportModuleSymbol $2 $4}
+                | 'import' MODULE '.' '*' ';' {ImportModuleAll $2}
+
+declaration :: {TopLevelStatement}
+declaration : qualifiedSymbol '::' type ';' {Declaration $1 $3}
+
+qualifiedSymbol :: {QualifiedSymbol}
+qualifiedSymbol : SYMBOL {QualifiedSymbolNoType $1}
+                | SYMBOL typeQualification {QualifiedSymbolType $1 $2}
+    

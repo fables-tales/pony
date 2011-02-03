@@ -87,4 +87,8 @@ declaration : qualifiedSymbol '::' type ';' {Declaration $1 $3}
 qualifiedSymbol :: {QualifiedSymbol}
 qualifiedSymbol : SYMBOL {QualifiedSymbolNoType $1}
                 | SYMBOL typeQualification {QualifiedSymbolType $1 $2}
-    
+
+
+assignment :: {TopLevelStatement}
+assignment : qualifiedSymbol '::' type ';' { SymbolAssignment $1 $2 }
+           | shortFormFunction { ShortFormFunctionAssignment $1 }

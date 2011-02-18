@@ -74,7 +74,7 @@ typenameList : TYPENAME ',' typenameList {$1:$3}
 
 symbolList :: {[String]}
 symbolList : SYMBOL ',' symbolList {$1:$3}
-           | SYMBOL [$1]
+           | SYMBOL {[$1]}
 
 importStatement :: {TopLevelStatement}
 importStatement : 'import' MODULE '.' type ';' {ImportTypeFrom $2 $4}
@@ -114,11 +114,11 @@ guard : '|' expression {BooleanGuard $2}
 
 type :: {Type}
 type : TYPENAME {UnqualifiedName $1}
-     | TYPENAME type-qualification {QualifiedName $1 $2}
-     | tuple-type {$1}
-     | function-type {$1}
-     | enum-type {$1}
-     | variant-type {$1}
+     | TYPENAME typeQualification {QualifiedName $1 $2}
+     | tupleType {$1}
+     | functionType {$1}
+     | enumType {$1}
+     | variantType {$1}
 
 variantType :: {Type}
 variantType : "variant" variantOptions {VariantType $2}
@@ -129,7 +129,7 @@ variantOptions : variantOptions ',' variantOption {$1 ++ [$2]}
                | variantOption {[$1]}
 
 variantOption :: {VariantOption}
-variantOption : TYPENAME tupleType 
+variantOption : TYPENAME tupleType  {VariantOption $1 $2}
 
 functionType :: {Type}
 functionType : pureFunctionType {$1}
@@ -141,3 +141,5 @@ pureFunctionType : type '->' type {PureFunctionType $1 $3}
 impureFunctionType :: {Type}
 impureFunctionType : type '=>' type {ImpureFunctionType $1 $3}
 
+enumType :: {Type}
+enumType : "enum" '{' enumList '}' {EnumType $3}

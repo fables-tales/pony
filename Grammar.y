@@ -73,13 +73,13 @@ typenameList : TYPENAME ',' typenameList {$1:$3}
              | TYPENAME {[$1]}
 
 symbolList :: {[String]}
-symbolList : SYMBOL ',' symbolList {$1:$3}
+symbolList : SYMBOL ',' sybmolList {$1 : $3}
            | SYMBOL {[$1]}
 
 importStatement :: {TopLevelStatement}
-importStatement : 'import' MODULE '.' type ';' {ImportTypeFrom $2 $4}
-                | 'import' MODULE '.' SYMBOL ';' {ImportSymbolFrom $2 $4}
-                | 'import' MODULE '.' '*' ';' {ImportStarFrom $2} 
+importStatement : 'import' MODULE '.' type ';' {ImportModuleType $2 $4}
+                | 'import' MODULE '.' SYMBOL ';' {ImportModuleSymbol $2 $4}
+                | 'import' MODULE '.' '*' ';' {ImportModuleAll $2}
 
 declaration :: {TopLevelStatement}
 declaration : qualifiedSymbol '::' type ';' {Declaration $1 $3}

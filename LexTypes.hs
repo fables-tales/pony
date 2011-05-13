@@ -23,7 +23,6 @@ data InnerToken = OParen | CParen
                          | ModuleName [String]
                          | Import
                          | Export
-                         | ModuleName
                          | Dot
                          | TypeName String
                          | Return
@@ -39,6 +38,7 @@ data InnerToken = OParen | CParen
                          | Comma
                          | Backslash
                          | StringLiteral String
+                         | CharacterLiteral Char
                          | AtSymbol String
                          | Symbol String
                          | DoubleColon
@@ -46,7 +46,6 @@ data InnerToken = OParen | CParen
                          | Else
                          | Case
                          | Underscore
-                         | TypeName String
                          | Pipe
                          | RightArrow
                          | LeftArrow

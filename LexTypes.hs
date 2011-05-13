@@ -18,7 +18,7 @@ data InnerToken = OParen | CParen
                          | Or
                          | Exclamation
                          | IntLiteral Integer
-                         | RealLiteral Double
+                         | LexRealLiteral Double
                          | Module
                          | ModuleName [String]
                          | Import
@@ -27,6 +27,7 @@ data InnerToken = OParen | CParen
                          | TypeName String
                          | Return
                          | While
+                         | Caret
                          | For
                          | In
                          | Do
@@ -37,9 +38,9 @@ data InnerToken = OParen | CParen
                          | Variant
                          | Comma
                          | Backslash
-                         | StringLiteral String
-                         | CharacterLiteral Char
-                         | AtSymbol String
+                         | LexStringLiteral String
+                         | LexCharacterLiteral Char
+                         | LexAtSymbol String
                          | Symbol String
                          | DoubleColon
                          | If
@@ -49,6 +50,7 @@ data InnerToken = OParen | CParen
                          | Pipe
                          | RightArrow
                          | LeftArrow
+                         | DoubleLeftArrow
                          | OSqB
                          | Colon
                          | CSqb deriving (Show, Read, Eq)

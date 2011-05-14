@@ -62,7 +62,18 @@ module Parse where
     ATSYMBOL { Token _ _ (LexAtSymbol $$) }
     STRING {Token _ _ (LexStringLiteral $$)}
     CHARACTER {Token _ _ (LexCharLiteral $$)}
-
+%right '<-'
+%left 'or'
+%left 'and'
+%nonassoc '==' '!=' '<' '<=' '>' '>='
+%left '::'
+%left ':'
+%left '+' '-'
+%left '*' '/' '%'
+%right CALL
+%nonassoc UNARY
+%right '.' '^'
+%nonassoc '(' ')' '[' ']'
 %%
 translationUnit :: {Module}
 translationUnit : topLevelStatements { Module ["anon"] $1 } 
@@ -194,7 +205,7 @@ typeParameter : literal {TypeParameterLiteral $1}
 statement :: {Statement}
 statement : assignment {$1}
           | declaration {$1}
-          | functionCallExpression {$1}
+          | functionCallExpression %prec CALL {$1}
           | block {$1}
           | whileBlock {$1}
           | forBlock {$1}
@@ -254,7 +265,7 @@ variantMatchPattern : type {VariantMatchPattern $1 []}
 
 expression :: {Expression}
 expression : literal {LiteralExp $1}
-           | functionCallExpression {$1}
+           | functionCallExpression %prec CALL {$1}
            | listExpression {$1}
            | tupleExpression {$1}
            | hintExpression {$1}
@@ -321,10 +332,10 @@ variantConstructorExpression : type {VariantConstructorExpA $1}
                              | type expression {VariantConstructorExpB $1 $2}
 
 unaryOperator :: {UnaryOp}
-unaryOperator : '!' {UnaryNot}
-              | '*' {UnaryDeref}
-              | '-' {UnaryNegate}
-              | '+' {UnaryIdentity}
+unaryOperator : '!' %prec UNARY {UnaryNot}
+              | '*' %prec UNARY {UnaryDeref}
+              | '-' %prec UNARY {UnaryNegate}
+              | '+' %prec UNARY {UnaryIdentity}
 
 binaryOperator :: {BinOp}
 binaryOperator : '+' {BinaryAddition}

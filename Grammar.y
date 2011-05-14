@@ -62,7 +62,16 @@ module Parse where
     ATSYMBOL { Token _ _ (LexAtSymbol $$) }
     STRING {Token _ _ (LexStringLiteral $$)}
     CHARACTER {Token _ _ (LexCharLiteral $$)}
-
+%right '<-'
+%left 'or'
+%left 'and'
+%nonassoc '==' '!=' '<' '<=' '>' '>='
+%left '::'
+%left ':'
+%left '+' '-'
+%left '*' '/' '%'
+%right '.' '^'
+%nonassoc '(' ')' '[' ']'
 %%
 translationUnit :: {Module}
 translationUnit : topLevelStatements { Module ["anon"] $1 } 

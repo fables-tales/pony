@@ -47,7 +47,6 @@ module Parse where
     ':=' { Token _ _ ColonEq }
     '_' { Token _ _ Underscore }
     '<-' { Token _ _ LeftArrow }
-    '=>' { Token _ _ DoubleLeftArrow}
     '->' { Token _ _ RightArrow } 
     '::' { Token _ _ DoubleColon }
     ':'  { Token _ _ Colon }
@@ -164,14 +163,8 @@ variantOption :: {VariantOption}
 variantOption : TYPENAME tupleType  {VariantOption $1 $2}
 
 functionType :: {Type}
-functionType : pureFunctionType {$1}
-             | impureFunctionType {$1}
+functionType : type '->' type {FunctionType $1 $3}
 
-pureFunctionType :: {Type}
-pureFunctionType : type '->' type {PureFunctionType $1 $3}
-
-impureFunctionType :: {Type}
-impureFunctionType : type '=>' type {ImpureFunctionType $1 $3}
 
 enumType :: {Type}
 enumType : 'enum' '{' enumList '}' {EnumType $3}

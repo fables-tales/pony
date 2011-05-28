@@ -114,7 +114,7 @@ declaration : qualifiedSymbol '::' type ';' {Declaration $1 $3}
 
 qualifiedSymbol :: {QualifiedSymbol}
 qualifiedSymbol : SYMBOL {UntypedQualifiedSymbol $1}
-                | SYMBOL type {TypedQualifiedSymbol $1 $2}
+                | SYMBOL typeQualification {TypedQualifiedSymbol $1 $2}
 
 assignment :: {Statement}
 assignment : qualifiedSymbol '=' expression ';' {Assign $1 $3}
@@ -123,11 +123,10 @@ assignment : qualifiedSymbol '=' expression ';' {Assign $1 $3}
 guardedPatternList :: {GuardedPatternList}
 guardedPatternList : patternList guard {FullGuard $1 $2}
                    | patternList {PatternOnlyGuard $1}
-                   | guard {GuardOnlyGuard $1}
-                   | {-empty-} {NoGuard}
 
 shortFormFunction :: {ShortFormFunction}
 shortFormFunction : qualifiedSymbol '(' guardedPatternList ')' functionBody ';' {SFF $1 $3 $5}
+                  | qualifiedSymbol '(' ')' functionBody ';' {SFF $1 [] $5}
 
 functionBody :: {FunctionBody}
 functionBody : block {BlockBody $1}
@@ -179,7 +178,7 @@ atSymbols : atSymbol ',' atSymbols {$1 : $3}
 
 tupleType :: {Type}
 tupleType : '(' typeList ')' {TupleType $2}
-
+          | '(' ')' {TupleType []}
 typeList :: {[Type]}
 typeList : type ',' typeList {$1 : $3}
          | type {[$1]}
@@ -228,7 +227,7 @@ ifBlock : 'if' expression block {IfStatement $2 $3}
 
 
 caseBlock :: {Statement}
-caseblock : 'case' expression '{' caseBodyList '}' {CaseStatement $1 $2}
+caseBlock : 'case' expression '{' caseBodyList '}' {CaseStatement $1 $2}
 
 caseBodyList :: {[CaseBody]}
 caseBodyList : caseBody caseBodyList {$1 : $2}
@@ -275,6 +274,7 @@ functionCallExpression : expression '(' ')' {FunctionCall $1 []}
 
 lambda :: {Expression}
 lambda : '\\' '(' guardedPatternList ')' functionBody {Lambda $3 $5}
+       | '\\' '(' ')' functionBody {Lambda [] $4}
        | '\\' functionBody {Lambda [] $2}
 
 listExpression :: {Expression}
@@ -323,7 +323,7 @@ atSymbol : ATSYMBOL {FirmAtSymbol $1}
 
 variantConstructorExpression :: {Expression}
 variantConstructorExpression : type {VariantConstructorExpA $1}
-                             | type expression {VariantConstructorExpB $1 $2}
+                             | type tupleExpression {VariantConstructorExpB $1 $2}
 
 unaryOperator :: {UnaryOp}
 unaryOperator : '!' %prec UNARY {UnaryNot}

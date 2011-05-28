@@ -77,6 +77,7 @@ module Parse where
 translationUnit :: {Module}
 translationUnit : topLevelStatements { Module ["anon"] $1 } 
                 | moduleDeclaration topLevelStatements { Module $1 $2 }
+                | {-empty-} {Module ["anon"] []}
 
 moduleDeclaration :: {[String]}
 moduleDeclaration : 'module' MODULE ';' { $2 }
